@@ -21,7 +21,13 @@ if (!function_exists('sentry_register')) {
             Raven_Autoloader::register();
 
             // Set error handler
-            $GLOBALS['SENTRY_CLIENT'] = new Raven_Client($extConf['sentryDSN']);
+            $options = array();
+            $options['http_proxy'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'];
+            if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'] !== '') {
+                $options['http_proxy'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'];
+            }
+
+            $GLOBALS['SENTRY_CLIENT'] = new Raven_Client($extConf['sentryDSN'], $options);
             $ravenErrorHandler = new Raven_ErrorHandler($GLOBALS['SENTRY_CLIENT']);
 
             $errorMask = E_ALL & ~(E_DEPRECATED | E_NOTICE | E_STRICT);
