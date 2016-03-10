@@ -1,4 +1,4 @@
-# TYPO3 Sentry integration
+# TYPO3 Sentry integration - fork from https://github.com/dmitryd/typo3-sentry
 
 This extension sends error messages from TYPO3 CMS to Sentry event logging
 system. Administrators need to configure Sentry URL after the extension
@@ -14,5 +14,5 @@ lib/raven-php/LICENSE.
 
 ## Contact
 
-Author: Dmitry Dulepov
-E-mail: dmitry.dulepov@gmail.com
+Author: move:elevator
+E-mail: typo3@move-elevator.de

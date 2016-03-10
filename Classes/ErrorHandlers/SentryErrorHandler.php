@@ -1,5 +1,6 @@
 <?php
-namespace DmitryDulepov\Sentry\ErrorHandlers;
+namespace MoveElevator\Sentry\ErrorHandlers;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -35,66 +36,72 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @author Dmitry Dulepov <dmitry.dulepov@gmail.com>
  */
-class SentryErrorHandler implements \TYPO3\CMS\Core\Error\ErrorHandlerInterface, \TYPO3\CMS\Core\SingletonInterface {
+class SentryErrorHandler implements \TYPO3\CMS\Core\Error\ErrorHandlerInterface, \TYPO3\CMS\Core\SingletonInterface
+{
 
-	/** @var \TYPO3\CMS\Core\Error\ErrorHandlerInterface */
-	protected $typo3ErrorHandler = null;
+    /** @var \TYPO3\CMS\Core\Error\ErrorHandlerInterface */
+    protected $typo3ErrorHandler = null;
 
-	/**
-	 * Registers this class as default error handler
-	 *
-	 * @param integer $errorHandlerErrors The integer representing the E_* error level which should be
-	 * @param \Raven_ErrorHandler $ravenErrorHandler Note: must be last to ensure interface compatibility!
-	 */
-	public function __construct($errorHandlerErrors, \Raven_ErrorHandler $ravenErrorHandler = NULL) {
-		$extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
-		if ($extConf['passErrorsToTypo3']) {
-			// The code below will set up a TYPO3 error handler
-			$this->typo3ErrorHandler = GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'], $errorHandlerErrors);
+    /**
+     * Registers this class as default error handler
+     *
+     * @param integer $errorHandlerErrors The integer representing the E_* error level which should be
+     * @param \Raven_ErrorHandler $ravenErrorHandler Note: must be last to ensure interface compatibility!
+     */
+    public function __construct($errorHandlerErrors, \Raven_ErrorHandler $ravenErrorHandler = null)
+    {
+        $extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
+        if ($extConf['passErrorsToTypo3']) {
+            // The code below will set up a TYPO3 error handler
+            $this->typo3ErrorHandler = GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandler'],
+                $errorHandlerErrors);
 
-			$ravenErrorHandler->registerErrorHandler(true, $errorHandlerErrors);
-		}
-	}
+            $ravenErrorHandler->registerErrorHandler(true, $errorHandlerErrors);
+        }
+    }
 
-	/**
-	 * Defines which error levels should result in an exception thrown.
-	 *
-	 * @param integer $exceptionalErrors The integer representing the E_* error level to handle as exceptions
-	 * @return void
-	 */
-	public function setExceptionalErrors($exceptionalErrors) {
-		if ($this->typo3ErrorHandler) {
-			$this->typo3ErrorHandler->setExceptionalErrors($exceptionalErrors);
-		}
-	}
+    /**
+     * Defines which error levels should result in an exception thrown.
+     *
+     * @param integer $exceptionalErrors The integer representing the E_* error level to handle as exceptions
+     * @return void
+     */
+    public function setExceptionalErrors($exceptionalErrors)
+    {
+        if ($this->typo3ErrorHandler) {
+            $this->typo3ErrorHandler->setExceptionalErrors($exceptionalErrors);
+        }
+    }
 
-	/**
-	 * Handles an error.
-	 * If the error is registered as exceptionalError it will by converted into an exception, to be handled
-	 * by the configured exceptionhandler. Additionall the error message is written to the configured logs.
-	 * If TYPO3_MODE is 'BE' the error message is also added to the flashMessageQueue, in FE the error message
-	 * is displayed in the admin panel (as TsLog message)
-	 *
-	 * @param integer $errorLevel The error level - one of the E_* constants
-	 * @param string $errorMessage The error message
-	 * @param string $errorFile Name of the file the error occurred in
-	 * @param integer $errorLine Line number where the error occurred
-	 * @return void
-	 * @throws \TYPO3\CMS\Core\Error\Exception with the data passed to this method if the error is registered as exceptionalError
-	 */
-	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
-		// Empty
-	}
+    /**
+     * Handles an error.
+     * If the error is registered as exceptionalError it will by converted into an exception, to be handled
+     * by the configured exceptionhandler. Additionall the error message is written to the configured logs.
+     * If TYPO3_MODE is 'BE' the error message is also added to the flashMessageQueue, in FE the error message
+     * is displayed in the admin panel (as TsLog message)
+     *
+     * @param integer $errorLevel The error level - one of the E_* constants
+     * @param string $errorMessage The error message
+     * @param string $errorFile Name of the file the error occurred in
+     * @param integer $errorLine Line number where the error occurred
+     * @return void
+     * @throws \TYPO3\CMS\Core\Error\Exception with the data passed to this method if the error is registered as exceptionalError
+     */
+    public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine)
+    {
+        // Empty
+    }
 
-	/**
-	 * Prepares the class to replace TYPO3 standard handler with Raven-PHP
-	 * implementation.
-	 *
-	 * @param \Raven_ErrorHandler $ravenErrorHandler
-	 * @param int $errorMask
-	 * @return void
-	 */
-	public static function initialize(\Raven_ErrorHandler $ravenErrorHandler, $errorMask) {
-		GeneralUtility::makeInstance(__CLASS__, $errorMask, $ravenErrorHandler);
-	}
+    /**
+     * Prepares the class to replace TYPO3 standard handler with Raven-PHP
+     * implementation.
+     *
+     * @param \Raven_ErrorHandler $ravenErrorHandler
+     * @param int $errorMask
+     * @return void
+     */
+    public static function initialize(\Raven_ErrorHandler $ravenErrorHandler, $errorMask)
+    {
+        GeneralUtility::makeInstance(__CLASS__, $errorMask, $ravenErrorHandler);
+    }
 }

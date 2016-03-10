@@ -24,7 +24,7 @@
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
-namespace DmitryDulepov\Sentry\ErrorHandlers;
+namespace MoveElevator\Sentry\ErrorHandlers;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\AbstractContentObject;
@@ -33,41 +33,48 @@ use TYPO3\CMS\Frontend\ContentObject\AbstractContentObject;
  * This class contains a TYPO3 7.0 FE exception handler. It has to be an XCLASS
  * because somebody hard-coded extension class name in the core.
  *
- * @package DmitryDulepov\Sentry\Controller
+ * @package MoveElevator\Sentry\Controller
  *
  * @author Dmitry Dulepov <dmitry.dulepov@gmail.com>
  */
-class SentryExceptionHandlerFrontend extends \TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler implements \TYPO3\CMS\Core\SingletonInterface {
+class SentryExceptionHandlerFrontend extends \TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler implements \TYPO3\CMS\Core\SingletonInterface
+{
 
-	/** @var \Raven_ErrorHandler */
-	protected $ravenErrorHandler;
+    /** @var \Raven_ErrorHandler */
+    protected $ravenErrorHandler;
 
-	public function __construct(\Raven_ErrorHandler $ravenErrorHandler) {
-		$this->ravenErrorHandler = $ravenErrorHandler;
-	}
+    public function __construct(\Raven_ErrorHandler $ravenErrorHandler)
+    {
+        $this->ravenErrorHandler = $ravenErrorHandler;
+    }
 
-	/**
-	 * Handles exceptions thrown during rendering of content objects
-	 * The handler can decide whether to re-throw the exception or
-	 * return a nice error message for production context.
-	 *
-	 * @param \Exception $exception
-	 * @param AbstractContentObject $contentObject
-	 * @param array $contentObjectConfiguration
-	 * @return string
-	 */
-	public function handle(\Exception $exception, AbstractContentObject $contentObject = NULL, $contentObjectConfiguration = array()) {
-		// TRUE below prevents Raven from calling a previous handler (not FE handler)
-		$this->ravenErrorHandler->handleException($exception, TRUE);
+    /**
+     * Handles exceptions thrown during rendering of content objects
+     * The handler can decide whether to re-throw the exception or
+     * return a nice error message for production context.
+     *
+     * @param \Exception $exception
+     * @param AbstractContentObject $contentObject
+     * @param array $contentObjectConfiguration
+     * @return string
+     */
+    public function handle(
+        \Exception $exception,
+        AbstractContentObject $contentObject = null,
+        $contentObjectConfiguration = array()
+    ) {
+        // TRUE below prevents Raven from calling a previous handler (not FE handler)
+        $this->ravenErrorHandler->handleException($exception, true);
 
-		$extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
-		if ($extConf['passErrorsToTypo3']) {
-			parent::handle($exception, $contentObject, $contentObjectConfiguration);
-		}
-	}
+        $extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
+        if ($extConf['passErrorsToTypo3']) {
+            parent::handle($exception, $contentObject, $contentObjectConfiguration);
+        }
+    }
 
-	static public function initialize($ravenErrorHandler) {
-		GeneralUtility::makeInstance(__CLASS__, $ravenErrorHandler);
-	}
+    static public function initialize($ravenErrorHandler)
+    {
+        GeneralUtility::makeInstance(__CLASS__, $ravenErrorHandler);
+    }
 
 }
