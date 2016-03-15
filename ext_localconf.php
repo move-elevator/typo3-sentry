@@ -20,13 +20,19 @@ if (!function_exists('sentry_register')) {
             require_once($ravenPhpAutoloaderPath);
             Raven_Autoloader::register();
 
-            // Set error handler
-            $options = array();
-            $options['http_proxy'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'];
-            if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'] !== '') {
+            if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer']) && $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'] !== '') {
                 $options['http_proxy'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'];
             }
 
+            if (isset($extConf['connectionType'])) {
+                $options['curl_method'] = $extConf['connectionType'];
+            }
+
+            if (isset($extConf['connectionType'])) {
+                $options['verify_ssl'] = $extConf['verifySSL'];
+            }
+
+            // Set error handler
             $GLOBALS['SENTRY_CLIENT'] = new Raven_Client($extConf['sentryDSN'], $options);
             $ravenErrorHandler = new Raven_ErrorHandler($GLOBALS['SENTRY_CLIENT']);
 

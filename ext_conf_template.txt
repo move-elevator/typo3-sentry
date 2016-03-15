@@ -6,3 +6,9 @@ passErrorsToTypo3 = 1
 
 # cat=basic/enable; type=boolean; label=Enable test plugin:Test plugin simulates errors, warnings and exceptions
 enableTestPlugin = 0
+
+# cat=basic/enable; type=string; label=Connection Method. async|sync|exec
+connectionType = async
+
+# cat=basic/enable; type=boolean; label=Verify SSL curl connection
+verifySSL = 0
