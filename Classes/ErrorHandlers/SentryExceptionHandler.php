@@ -1,5 +1,6 @@
 <?php
-namespace DmitryDulepov\Sentry\ErrorHandlers;
+namespace MoveElevator\Sentry\ErrorHandlers;
+
 /***************************************************************
  *  Copyright notice
  *
@@ -36,55 +37,60 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  *
  * @author Dmitry Dulepov <dmitry.dulepov@gmail.com>
  */
-class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHandler implements SingletonInterface {
+class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHandler implements SingletonInterface
+{
 
-	/**
-	 * Constructs this exception handler - registers itself as the default exception handler.
-	 *
-	 * @param \Raven_ErrorHandler $ravenErrorHandler Note: must accept NULL because of compatiblity with the interface
-	 */
-	public function __construct(\Raven_ErrorHandler $ravenErrorHandler = NULL) {
-		$extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
-		if ($extConf['passErrorsToTypo3']) {
-			// The code below will set up a TYPO3 exception handler
+    /**
+     * Constructs this exception handler - registers itself as the default exception handler.
+     *
+     * @param \Raven_ErrorHandler $ravenErrorHandler Note: must accept NULL because of compatiblity with the interface
+     */
+    public function __construct(\Raven_ErrorHandler $ravenErrorHandler = null)
+    {
+        $extConf = @unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['sentry']);
+        if ($extConf['passErrorsToTypo3']) {
+            // The code below will set up a TYPO3 exception handler
 
-			if(trim($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']) !== '') {
-				GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']);
-			}
+            if (trim($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']) !== '') {
+                GeneralUtility::makeInstance($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['errors']['exceptionHandler']);
+            }
 
-			// We always register exception handler for Sentry, regardless of TYPO3 settings!
-			$ravenErrorHandler->registerExceptionHandler(true);
-		}
-	}
+            // We always register exception handler for Sentry, regardless of TYPO3 settings!
+            $ravenErrorHandler->registerExceptionHandler(true);
+        }
+    }
 
-	/**
-	 * Formats and echoes the exception as XHTML.
-	 *
-	 * @param \Exception|\Throwable $exception The exception object
-	 * @return void
-	 */
-	public function echoExceptionWeb($exception) {
-		// Empty, not used directly
-	}
+    /**
+     * Formats and echoes the exception as XHTML.
+     *
+     * @param \Exception|\Throwable $exception The exception object
+     * @return void
+     */
+    public function echoExceptionWeb(\Exception $exception)
+    {
+        // Empty, not used directly
+    }
 
-	/**
-	 * Formats and echoes the exception for the command line
-	 *
-	 * @param \Exception|\Throwable $exception The exception object
-	 * @return void
-	 */
-	public function echoExceptionCLI($exception) {
-		// Empty, not used directly
-	}
+    /**
+     * Formats and echoes the exception for the command line
+     *
+     * @param \Exception|\Throwable $exception The exception object
+     * @return void
+     */
+    public function echoExceptionCLI(\Exception $exception)
+    {
+        // Empty, not used directly
+    }
 
-	/**
-	 * Prepares the class to replace TYPO3 standard handler with Raven-PHP
-	 * implementation.
-	 *
-	 * @param \Raven_ErrorHandler $ravenErrorHandler
-	 * @return void
-	 */
-	public static function initialize(\Raven_ErrorHandler $ravenErrorHandler) {
-		GeneralUtility::makeInstance(__CLASS__, $ravenErrorHandler);
-	}
+    /**
+     * Prepares the class to replace TYPO3 standard handler with Raven-PHP
+     * implementation.
+     *
+     * @param \Raven_ErrorHandler $ravenErrorHandler
+     * @return void
+     */
+    public static function initialize(\Raven_ErrorHandler $ravenErrorHandler)
+    {
+        GeneralUtility::makeInstance(__CLASS__, $ravenErrorHandler);
+    }
 }
