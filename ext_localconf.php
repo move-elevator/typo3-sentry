@@ -20,6 +20,8 @@ if (!function_exists('sentry_register')) {
             require_once($ravenPhpAutoloaderPath);
             Raven_Autoloader::register();
 
+            $options = array();
+
             if (isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer']) && $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'] !== '') {
                 $options['http_proxy'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'];
             }

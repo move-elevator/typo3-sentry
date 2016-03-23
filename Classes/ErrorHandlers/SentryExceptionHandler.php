@@ -66,7 +66,7 @@ class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHand
      * @param \Exception|\Throwable $exception The exception object
      * @return void
      */
-    public function echoExceptionWeb(\Exception $exception)
+    public function echoExceptionWeb($exception)
     {
         // Empty, not used directly
     }
@@ -77,7 +77,7 @@ class SentryExceptionHandler extends \TYPO3\CMS\Core\Error\AbstractExceptionHand
      * @param \Exception|\Throwable $exception The exception object
      * @return void
      */
-    public function echoExceptionCLI(\Exception $exception)
+    public function echoExceptionCLI($exception)
     {
         // Empty, not used directly
     }
